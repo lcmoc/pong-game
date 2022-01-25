@@ -1,0 +1,10 @@
+.PlayButton {
+    background-color: transparent;
+    color: #ffffff;
+    border: #ffffff solid 2px;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-top: 30px;
+    padding: 10px 20px;
+    font-size: 30px;
+}

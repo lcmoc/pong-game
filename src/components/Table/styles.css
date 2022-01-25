@@ -1,0 +1,12 @@
+.OuterWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.InnerWrapper {
+    border: #ffff 5px solid;
+    height: 500px;
+    width: 1000px;
+    border-radius: 5px;
+}
