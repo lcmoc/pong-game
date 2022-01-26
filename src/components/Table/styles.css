@@ -9,4 +9,5 @@
     height: 500px;
     width: 1000px;
     border-radius: 5px;
+    position: relative;
 }

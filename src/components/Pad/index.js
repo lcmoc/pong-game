@@ -2,7 +2,7 @@ import './styles.css'
 
 const Pad = () => {
     return(
-        <div className='Bat'></div>
+        <div className='Pad'></div>
     )
 };
 

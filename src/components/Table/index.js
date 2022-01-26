@@ -3,13 +3,13 @@ import './styles.css'
 import Ball from '../Ball';
 import Pad from '../Pad';
 
-const Table = () => {
+const Table = ({playingIsActive}) => {
   return (
     <div className="OuterWrapper">
       <div className='InnerWrapper'>
           <Pad />
           <Pad />
-          <Ball />
+          <Ball playingIsActive={playingIsActive}/>
       </div>
     </div>
   );
