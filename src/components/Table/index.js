@@ -3,13 +3,14 @@ import './styles.css'
 import Ball from '../Ball';
 import Pad from '../Pad';
 
-const Table = ({playingIsActive}) => {
+const Table = ({playingIsActive, increaseCounter}) => {
   return (
     <div className="OuterWrapper">
       <div className='InnerWrapper'>
           <Pad />
+
+          <Ball playingIsActive={playingIsActive} increaseCounter={increaseCounter}/>
           <Pad />
-          <Ball playingIsActive={playingIsActive}/>
       </div>
     </div>
   );

@@ -4,5 +4,6 @@
     background-color: #ffff;
     border-radius: 8px;
     border: 1px solid #000000;
-    margin: 5px;
+    position: absolute;
+    left: 0%
 }

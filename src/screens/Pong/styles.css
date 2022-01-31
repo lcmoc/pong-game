@@ -8,3 +8,9 @@
     padding: 10px 20px;
     font-size: 30px;
 }
+
+.Score {
+    font-size: 50px;
+    color: #ffff;
+    margin-bottom: 20px;
+}

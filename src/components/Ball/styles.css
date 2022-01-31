@@ -1,9 +1,5 @@
 .Ball {
     background-color: #ffffff;
-    height: 20px;
-    width: 20px;
     border-radius: 50%;
     position: absolute;
-    margin-left: -10px;
-    margin-top: -10px;
 }
