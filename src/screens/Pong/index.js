@@ -9,7 +9,6 @@ const Pong = () => {
   const [score, setScore] = useState({ left: 0, right: 0 });
 
   const increaseCounter = (isInRightGoal, isInLeftGoal) => {
-    console.log('xxx');
     setScore({
       left: isInRightGoal ? score.left + 1 : score.left,
       right: isInLeftGoal ? score.right + 1 : score.right,
