@@ -60,7 +60,7 @@ const Ball = ({ playingIsActive, increaseCounter, hasCollisionWithPad }) => {
 
     const doStep = () => {
       setLeftPos(direction.x ? leftPos + step : leftPos - step);
-      //setTopPos(direction.y ? topPos + step : topPos - step);
+      setTopPos(direction.y ? topPos + step : topPos - step);
     };
 
     const wallCollision = () => {
@@ -78,7 +78,7 @@ const Ball = ({ playingIsActive, increaseCounter, hasCollisionWithPad }) => {
         wallCollision();
         padCollision();
         doStep();
-      }, 5);
+      }, 3);
 
     isGoalCollision() && reinitialize();
 

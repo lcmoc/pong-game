@@ -17,23 +17,20 @@ const Table = ({ playingIsActive, increaseCounter }) => {
     bottomPos: 75,
   });
 
-  const padPosHandler = (leftPos, topPos, bottomPos, right) => {
-    
-    if (!right) {
-      setLeftPadPos({
-        leftPos: leftPos,
-        topPos: topPos,
-        bottomPos: bottomPos,
-      });
-    }
+  const padPosHandler = (props, right) => {
+    const allPropsAreSet = props.leftPos && props.topPos && props.bottomPos;
 
-    if (right) {
-      setRightPadPos({
-        leftPos: leftPos,
-        topPos: topPos,
-        bottomPos: bottomPos,
+    !right &&
+      allPropsAreSet &&
+      setLeftPadPos({
+        ...props,
       });
-    }
+
+    right &&
+      allPropsAreSet &&
+      setRightPadPos({
+        ...props,
+      });
   };
 
   const ballIsOnSameYCoordinateAsPad = (topPos, xCollisionPad) => {
@@ -41,6 +38,7 @@ const Table = ({ playingIsActive, increaseCounter }) => {
       xCollisionPad === 1 &&
       topPos <= leftPadPos.bottomPos &&
       topPos >= leftPadPos.topPos;
+
     const rightPadCollision =
       xCollisionPad === 2 &&
       topPos <= rightPadPos.bottomPos &&
@@ -58,16 +56,15 @@ const Table = ({ playingIsActive, increaseCounter }) => {
 
   const hasCollisionWithPad = (leftPos, topPos, rightPos) => {
     const xCollisionPad = ballIsOnSameXCoordinateAsPad(leftPos, rightPos);
-
-    if (xCollisionPad === 1) {
-      return ballIsOnSameYCoordinateAsPad(topPos, xCollisionPad);
+    
+    switch (xCollisionPad) {
+      case 1:
+        return ballIsOnSameYCoordinateAsPad(topPos, xCollisionPad);
+      case 2:
+        return ballIsOnSameYCoordinateAsPad(topPos, xCollisionPad);
+      default:
+        return 0;
     }
-
-    if (xCollisionPad === 2) {
-      return ballIsOnSameYCoordinateAsPad(topPos, xCollisionPad);
-    }
-
-    return 0;
   };
 
   return (

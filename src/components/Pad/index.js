@@ -3,7 +3,6 @@ import "./styles.css";
 import React, { useCallback, useEffect, useState } from "react";
 
 const Pad = ({ playingIsActive, padPosHandler, isRightPad }) => {
-  // keyControls w / s
   const [topPos, setTopPos] = useState(50);
 
   const step = 1;
@@ -68,10 +67,24 @@ const Pad = ({ playingIsActive, padPosHandler, isRightPad }) => {
 
   const movePad = useCallback(
     (pressedKey) => {
+      const props = {
+        leftPos: isRightPad ? leftPos : getRightPos(),
+        topPos: topPos,
+        bottomPos: getBottomPos(),
+      };
+
       setTopPos(move(pressedKey.keyCode));
-      padPosHandler(getRightPos(), topPos, getBottomPos(), isRightPad);
+      padPosHandler(props, isRightPad);
     },
-    [padPosHandler, move, getRightPos, getBottomPos, topPos, isRightPad]
+    [
+      padPosHandler,
+      move,
+      getRightPos,
+      getBottomPos,
+      topPos,
+      isRightPad,
+      leftPos,
+    ]
   );
 
   useEffect(() => {
