@@ -2,7 +2,12 @@ import "./styles.css";
 
 import React, { useCallback, useEffect, useState } from "react";
 
-const Ball = ({ playingIsActive, increaseCounter, hasCollisionWithPad }) => {
+const Ball = ({
+  playingIsActive,
+  increaseCounter,
+  hasCollisionWithPad,
+  yStep,
+}) => {
   const [topPos, setTopPos] = useState(50);
   const [leftPos, setLeftPos] = useState(50);
   const [direction, setDirection] = useState({
@@ -14,7 +19,7 @@ const Ball = ({ playingIsActive, increaseCounter, hasCollisionWithPad }) => {
     return leftPos + ballWidth;
   }, [leftPos]);
 
-  const step = 0.1;
+  const xStep = 0.05
   const ballHeight = 4;
   const ballWidth = 2;
   const isInRightGoal = getRightPos() >= 100;
@@ -38,12 +43,11 @@ const Ball = ({ playingIsActive, increaseCounter, hasCollisionWithPad }) => {
         x: true,
       });
 
-      hasCollisionWithPad(leftPos, topPos, getRightPos()) === 2 &&
+    hasCollisionWithPad(leftPos, topPos, getRightPos()) === 2 &&
       setDirection({
         ...direction,
         x: false,
       });
-
   }, [topPos, direction, hasCollisionWithPad, leftPos, getRightPos]);
 
   useEffect(() => {
@@ -59,8 +63,8 @@ const Ball = ({ playingIsActive, increaseCounter, hasCollisionWithPad }) => {
     };
 
     const doStep = () => {
-      setLeftPos(direction.x ? leftPos + step : leftPos - step);
-      setTopPos(direction.y ? topPos + step : topPos - step);
+      setLeftPos(direction.x ? leftPos + xStep : leftPos - xStep);
+      setTopPos(direction.y ? topPos + yStep : topPos - yStep);
     };
 
     const wallCollision = () => {
@@ -78,7 +82,7 @@ const Ball = ({ playingIsActive, increaseCounter, hasCollisionWithPad }) => {
         wallCollision();
         padCollision();
         doStep();
-      }, 3);
+      }, 1);
 
     isGoalCollision() && reinitialize();
 
@@ -93,6 +97,7 @@ const Ball = ({ playingIsActive, increaseCounter, hasCollisionWithPad }) => {
     isInRightGoal,
     isInLeftGoal,
     padCollision,
+    yStep
   ]);
 
   return <div className="Ball" style={style}></div>;

@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 const Pad = ({ playingIsActive, padPosHandler, isRightPad }) => {
   const [topPos, setTopPos] = useState(50);
 
-  const step = 1;
+  const step = 2;
   const padWidth = 3;
   const padHeight = 25;
   const arrowUp = 38; // keyCode Arrow up
