@@ -1,6 +1,6 @@
 import "./styles.css";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 const Pad = ({ playingIsActive, padPosHandler, isRightPad }) => {
   const [topPos, setTopPos] = useState(50);
@@ -36,27 +36,31 @@ const Pad = ({ playingIsActive, padPosHandler, isRightPad }) => {
 
   const moveLeftPad = useCallback(
     (keyCode) => {
-      return (
-        (keyCode === arrowUp && moveUp) || (keyCode === arrowDown && moveDown)
+      setTopPos(
+        (keyCode === arrowUp && moveUp()) ||
+          (keyCode === arrowDown && moveDown()) ||
+          topPos
       );
     },
-    [moveDown, moveUp]
+    [moveDown, moveUp, topPos]
   );
 
   const moveRightPad = useCallback(
     (keyCode) => {
-      return (keyCode === wUp && moveUp) || (keyCode === sDown && moveDown);
+      setTopPos(
+        (keyCode === wUp && moveUp()) ||
+          (keyCode === sDown && moveDown()) ||
+          topPos
+      );
     },
-    [moveDown, moveUp]
+    [moveDown, moveUp, topPos]
   );
 
   const move = useCallback(
     (keyCode) => {
-      return (
-        [arrowUp, arrowDown, wUp, sDown].includes(keyCode) &&
+      [arrowUp, arrowDown, wUp, sDown].includes(keyCode) &&
         ((!isRightPad && moveLeftPad(keyCode)) ||
-          (isRightPad && moveRightPad(keyCode)))
-      );
+          (isRightPad && moveRightPad(keyCode)));
     },
     [moveRightPad, moveLeftPad, isRightPad]
   );
@@ -65,26 +69,20 @@ const Pad = ({ playingIsActive, padPosHandler, isRightPad }) => {
     return leftPos + padWidth;
   }, [leftPos, padWidth]);
 
+  const padPosProps = useMemo(() => {
+    return {
+      leftPos: isRightPad ? leftPos : getRightPos(),
+      topPos: topPos,
+      bottomPos: getBottomPos(),
+    };
+  }, [isRightPad, leftPos, getRightPos, getBottomPos, topPos]);
+
   const movePad = useCallback(
     (pressedKey) => {
-      const props = {
-        leftPos: isRightPad ? leftPos : getRightPos(),
-        topPos: topPos,
-        bottomPos: getBottomPos(),
-      };
-
-      setTopPos(move(pressedKey.keyCode));
-      padPosHandler(props, isRightPad);
+      move(pressedKey.keyCode);
+      padPosHandler(padPosProps, isRightPad);
     },
-    [
-      padPosHandler,
-      move,
-      getRightPos,
-      getBottomPos,
-      topPos,
-      isRightPad,
-      leftPos,
-    ]
+    [padPosHandler, move, isRightPad, padPosProps]
   );
 
   useEffect(() => {

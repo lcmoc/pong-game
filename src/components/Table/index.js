@@ -56,7 +56,6 @@ const Table = ({ playingIsActive, increaseCounter }) => {
 
   const hasCollisionWithPad = (leftPos, topPos, rightPos) => {
     const xCollisionPad = ballIsOnSameXCoordinateAsPad(leftPos, rightPos);
-    
     switch (xCollisionPad) {
       case 1:
         return ballIsOnSameYCoordinateAsPad(topPos, xCollisionPad);
