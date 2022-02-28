@@ -63,7 +63,7 @@ const Table = ({ playingIsActive, increaseCounter, newGame }) => {
       topPos <= rightPadPos.bottomPos &&
       topPos >= rightPadPos.topPos;
 
-    (leftPadCollision) && handleYSpeed(topPos);
+    (leftPadCollision || rightPadCollision) && handleYSpeed(topPos);
 
     return (leftPadCollision && 1) || (rightPadCollision && 2);
   };
