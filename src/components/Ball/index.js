@@ -1,6 +1,8 @@
 import "./styles.css";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect } from "react";
+
+import { useDoc } from "@syncstate/react";
 
 const Ball = ({
   playingIsActive,
@@ -8,12 +10,11 @@ const Ball = ({
   hasCollisionWithPad,
   yStep,
 }) => {
-  const [topPos, setTopPos] = useState(50);
-  const [leftPos, setLeftPos] = useState(50);
-  const [direction, setDirection] = useState({
-    y: Math.random() < 0.5,
-    x: Math.random() < 0.5,
-  });
+  const [ballPos, setBallPos] = useDoc("/ballPos");
+  const [direction, setDirection] = useDoc("/direction");
+  
+  const topPos = ballPos.topPos;
+  const leftPos = ballPos.leftPos;
 
   const getRightPos = useCallback(() => {
     return leftPos + ballWidth;
@@ -37,25 +38,24 @@ const Ball = ({
   }, [isInLeftGoal, isInRightGoal]);
 
   const padCollision = useCallback(() => {
-    hasCollisionWithPad(leftPos, topPos, getRightPos()) === 1 &&
+    hasCollisionWithPad() === 1 &&
       setDirection({
         ...direction,
-        x: true,
-      });
+        x: true
+      })
 
-    hasCollisionWithPad(leftPos, topPos, getRightPos()) === 2 &&
-      setDirection({
+    hasCollisionWithPad() === 2 &&
+    setDirection({
         ...direction,
-        x: false,
-      });
-  }, [topPos, direction, hasCollisionWithPad, leftPos, getRightPos]);
+        x: false
+      })
+  }, [hasCollisionWithPad, direction, setDirection]);
 
   useEffect(() => {
     const reinitialize = () => {
       increaseCounter(isInRightGoal, isInLeftGoal);
-      setTopPos(50);
-      setLeftPos(50);
-      setDirection({ y: Math.random() < 0.5, x: Math.random() < 0.5 });
+      setBallPos({topPos: 50, leftPos: 50, rightPos: getRightPos()})
+      setDirection({y: Math.random() < 0.5, x: Math.random() < 0.5 });
     };
 
     const getBottomPos = () => {
@@ -63,8 +63,12 @@ const Ball = ({
     };
 
     const doStep = () => {
-      setLeftPos(direction.x ? leftPos + xStep : leftPos - xStep);
-      setTopPos(direction.y ? topPos + yStep : topPos - yStep);
+      setBallPos({
+        ...ballPos,
+        topPos: direction.y ? topPos + yStep : topPos - yStep,
+        leftPos: direction.x ? leftPos + xStep : leftPos - xStep,
+        rightPos: getRightPos(),
+      })
     };
 
     const wallCollision = () => {
@@ -91,13 +95,17 @@ const Ball = ({
     leftPos,
     topPos,
     playingIsActive,
-    direction,
     increaseCounter,
     isGoalCollision,
     isInRightGoal,
     isInLeftGoal,
     padCollision,
-    yStep
+    yStep,
+    ballPos,
+    setBallPos,
+    setDirection,
+    direction,
+    getRightPos,
   ]);
 
   return <div className="Ball" style={style}></div>;

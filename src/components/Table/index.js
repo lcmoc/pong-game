@@ -2,39 +2,19 @@ import "./styles.css";
 
 import Ball from "../Ball";
 import Pad from "../Pad";
+import { useDoc } from "@syncstate/react";
 import { useState } from "react";
 
-const Table = ({ playingIsActive, increaseCounter, newGame }) => {
+const Table = ({ playingIsActive, increaseCounter }) => {
   const [yStep, setYStep] = useState(0);
 
-  const [leftPadPos, setLeftPadPos] = useState({
-    leftPos: 3,
-    topPos: 50,
-    bottomPos: 75,
-  });
-
-  const [rightPadPos, setRightPadPos] = useState({
-    leftPos: 97,
-    topPos: 50,
-    bottomPos: 75,
-  });
-
-  const padPosHandler = (props, right) => {
-    const allPropsAreSet = props.leftPos && props.topPos && props.bottomPos;
-
-    !right &&
-      allPropsAreSet &&
-      setLeftPadPos({
-        ...props,
-      });
-
-    right &&
-      allPropsAreSet &&
-      setRightPadPos({
-        ...props,
-      });
-  };
-
+  const leftPadPosPath = "/leftPadPos";
+  const rightPadPosPath = "/rightPadPos";
+  
+  const [leftPadPos, setLeftPadPos] = useDoc(leftPadPosPath);
+  const [rightPadPos, setRightPadPos] = useDoc(rightPadPosPath);
+  const [ballPos, setBallPos] = useDoc("/ballPos");
+  
   const handleYSpeed = (topPos) => {
     const ballPosOnPad = (100 / (leftPadPos.bottomPos - leftPadPos.topPos) * (topPos - leftPadPos.topPos));
     
@@ -75,13 +55,13 @@ const Table = ({ playingIsActive, increaseCounter, newGame }) => {
     return (leftPadCollision && 1) || (rightPadCollision && 2);
   };
 
-  const hasCollisionWithPad = (leftPos, topPos, rightPos) => {
-    const xCollisionPad = ballIsOnSameXCoordinateAsPad(leftPos, rightPos);
+  const hasCollisionWithPad = () => {
+    const xCollisionPad = ballIsOnSameXCoordinateAsPad(ballPos.leftPos, ballPos.rightPos);
     switch (xCollisionPad) {
       case 1:
-        return ballIsOnSameYCoordinateAsPad(topPos, xCollisionPad);
+        return ballIsOnSameYCoordinateAsPad(ballPos.topPos, xCollisionPad);
       case 2:
-        return ballIsOnSameYCoordinateAsPad(topPos, xCollisionPad);
+        return ballIsOnSameYCoordinateAsPad(ballPos.topPos, xCollisionPad);
       default:
         return 0;
     }
@@ -90,11 +70,15 @@ const Table = ({ playingIsActive, increaseCounter, newGame }) => {
   return (
     <div className="OuterWrapper">
       <div className="InnerWrapper">
-        {newGame && (
+        {playingIsActive && (
           <>
             <Pad
               playingIsActive={playingIsActive}
-              padPosHandler={padPosHandler}
+              isRightPad={false}
+              keyCodeUp={87} // w
+              keyCodeDown={83} // s
+              padPosPath={leftPadPosPath}
+              key={"leftPad"}
             />
             <Ball
               playingIsActive={playingIsActive}
@@ -104,8 +88,11 @@ const Table = ({ playingIsActive, increaseCounter, newGame }) => {
             />
             <Pad
               playingIsActive={playingIsActive}
-              padPosHandler={padPosHandler}
               isRightPad
+              keyCodeUp={38} // keyCode Arrow up
+              keyCodeDown={40} // keyCode Arrow down
+              padPosPath={rightPadPosPath}
+              key={"rightPad"}
             />
           </>
         )}

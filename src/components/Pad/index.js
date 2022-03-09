@@ -1,19 +1,17 @@
 import "./styles.css";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 
-const Pad = ({ playingIsActive, padPosHandler, isRightPad }) => {
-  const [topPos, setTopPos] = useState(50);
+import { useDoc } from "@syncstate/react";
+
+const Pad = ({ playingIsActive, isRightPad = false, keyCodeUp, keyCodeDown, padPosPath}) => {  
+  const [padPos, setPadPos] = useDoc(padPosPath);
 
   const step = 2;
   const padWidth = 3;
   const padHeight = 25;
-  const arrowUp = 38; // keyCode Arrow up
-  const arrowDown = 40; // keyCode Arrow down
-  const wUp = 87; // keyCode w
-  const sDown = 83; // keyCode s
-
   const leftPos = isRightPad ? 100 - padWidth : 0;
+  const topPos = padPos.topPos;
 
   const style = {
     top: `${topPos}%`,
@@ -26,74 +24,45 @@ const Pad = ({ playingIsActive, padPosHandler, isRightPad }) => {
     return topPos + padHeight;
   }, [topPos]);
 
+  const getBounceWall = useCallback(() => {
+    return !isRightPad ? leftPos + padWidth: leftPos;
+  }, [leftPos, padWidth, isRightPad]);
+
   const moveDown = useCallback(() => {
-    return getBottomPos() < 100 && topPos + step;
-  }, [getBottomPos, topPos]);
+      setPadPos({
+        ...padPos,
+        leftPos: getBounceWall(),
+        topPos: getBottomPos() < 100 && topPos + step,
+        bottomPos: getBottomPos()
+      })
+  }, [getBottomPos, topPos, padPos, setPadPos, getBounceWall]);
 
   const moveUp = useCallback(() => {
-    return topPos > 0 && topPos - step;
-  }, [topPos]);
-
-  const moveLeftPad = useCallback(
-    (keyCode) => {
-      setTopPos(
-        (keyCode === arrowUp && moveUp()) ||
-          (keyCode === arrowDown && moveDown()) ||
-          topPos
-      );
-    },
-    [moveDown, moveUp, topPos]
-  );
-
-  const moveRightPad = useCallback(
-    (keyCode) => {
-      setTopPos(
-        (keyCode === wUp && moveUp()) ||
-          (keyCode === sDown && moveDown()) ||
-          topPos
-      );
-    },
-    [moveDown, moveUp, topPos]
-  );
-
-  const move = useCallback(
-    (keyCode) => {
-      [arrowUp, arrowDown, wUp, sDown].includes(keyCode) &&
-        ((!isRightPad && moveLeftPad(keyCode)) ||
-          (isRightPad && moveRightPad(keyCode)));
-    },
-    [moveRightPad, moveLeftPad, isRightPad]
-  );
-
-  const getRightPos = useCallback(() => {
-    return leftPos + padWidth;
-  }, [leftPos, padWidth]);
-
-  const padPosProps = useMemo(() => {
-    return {
-      leftPos: isRightPad ? leftPos : getRightPos(),
-      topPos: topPos,
-      bottomPos: getBottomPos(),
-    };
-  }, [isRightPad, leftPos, getRightPos, getBottomPos, topPos]);
+    setPadPos({
+      ...padPos,
+      leftPos: getBounceWall(),
+      topPos: topPos > 0 && topPos - step,
+      bottomPos: getBottomPos()
+    });
+  }, [topPos, padPos, setPadPos, getBottomPos, getBounceWall]);
 
   const movePad = useCallback(
     (pressedKey) => {
-      move(pressedKey.keyCode);
-      padPosHandler(padPosProps, isRightPad);
+      const keyCode = pressedKey.keyCode
+      
+      keyCode === keyCodeUp && moveUp();
+      keyCode === keyCodeDown && moveDown();
     },
-    [padPosHandler, move, isRightPad, padPosProps]
+    [keyCodeUp, keyCodeDown, moveUp, moveDown]
   );
 
   useEffect(() => {
-    playingIsActive && document.addEventListener("keydown", movePad);
-
-    //padPosHandler(leftPos + padWidth, topPos + padHeight);
+    document.addEventListener("keydown", movePad);
 
     return () => {
       document.removeEventListener("keydown", movePad);
     };
-  }, [playingIsActive, movePad, padPosHandler, topPos, isRightPad]);
+  }, [playingIsActive, movePad]);
 
   return <div className="Pad" style={style}></div>;
 };

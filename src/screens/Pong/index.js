@@ -3,11 +3,12 @@ import "./styles.css";
 import React, { useState } from "react";
 
 import Table from "../../components/Table";
+import { useDoc } from "@syncstate/react";
 
 const Pong = () => {
-  const [playingIsActive, setPlayingIsActive] = useState(false);
+  const [playingIsActive, setPlayingIsActive] = useDoc("/playingIsActive");
+  
   const [score, setScore] = useState({ left: 0, right: 0 });
-  const [newGame, setNewGame] = useState(false);
 
   const increaseCounter = (isInRightGoal, isInLeftGoal) => {
     setScore({
@@ -17,16 +18,14 @@ const Pong = () => {
   };
 
   const handleGameStart = () => {
-    !newGame && setScore({left: 0, right: 0})
-    setNewGame(!newGame);
-    setPlayingIsActive(!playingIsActive)
+    !playingIsActive && setScore({left: 0, right: 0})
+    setPlayingIsActive(!playingIsActive);
   };
 
   return (
     <>
       <div className="Score">{score.left} / {score.right}</div>
       <Table
-        newGame={newGame}
         playingIsActive={playingIsActive}
         increaseCounter={increaseCounter}
       />
