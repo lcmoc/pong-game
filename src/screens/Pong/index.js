@@ -7,7 +7,8 @@ import { useDoc } from "@syncstate/react";
 
 const Pong = () => {
   const [playingIsActive, setPlayingIsActive] = useDoc("/playingIsActive");
-  
+  const [newGame, setNewGame] = useDoc("/newGame");
+
   const [score, setScore] = useState({ left: 0, right: 0 });
 
   const increaseCounter = (isInRightGoal, isInLeftGoal) => {
@@ -18,21 +19,20 @@ const Pong = () => {
   };
 
   const handleGameStart = () => {
-    !playingIsActive && setScore({left: 0, right: 0})
+    !newGame && setScore({ left: 0, right: 0 });
+    setNewGame(!newGame);
     setPlayingIsActive(!playingIsActive);
   };
 
   return (
     <>
-      <div className="Score">{score.left} / {score.right}</div>
+      <div className="Score">
+        {score.left} / {score.right}
+      </div>
       <Table
-        playingIsActive={playingIsActive}
         increaseCounter={increaseCounter}
       />
-      <button
-        onClick={() => handleGameStart()}
-        className="PlayButton"
-      >
+      <button onClick={() => handleGameStart()} className="PlayButton">
         {playingIsActive ? "Stop" : "Start"}
       </button>
     </>

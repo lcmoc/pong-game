@@ -5,7 +5,7 @@ import Pad from "../Pad";
 import { useDoc } from "@syncstate/react";
 import { useState } from "react";
 
-const Table = ({ playingIsActive, increaseCounter }) => {
+const Table = ({ increaseCounter }) => {
   const [yStep, setYStep] = useState(0);
 
   const leftPadPosPath = "/leftPadPos";
@@ -14,6 +14,7 @@ const Table = ({ playingIsActive, increaseCounter }) => {
   const [leftPadPos, setLeftPadPos] = useDoc(leftPadPosPath);
   const [rightPadPos, setRightPadPos] = useDoc(rightPadPosPath);
   const [ballPos, setBallPos] = useDoc("/ballPos");
+  const [newGame, setNewGame] = useDoc("/ballPos");
   
   const handleYSpeed = (topPos) => {
     const ballPosOnPad = (100 / (leftPadPos.bottomPos - leftPadPos.topPos) * (topPos - leftPadPos.topPos));
@@ -70,24 +71,21 @@ const Table = ({ playingIsActive, increaseCounter }) => {
   return (
     <div className="OuterWrapper">
       <div className="InnerWrapper">
-        {playingIsActive && (
+        {newGame && (
           <>
             <Pad
-              playingIsActive={playingIsActive}
               isRightPad={false}
-              keyCodeUp={87} // w
-              keyCodeDown={83} // s
+              keyCodeUp={87} // keyCode w
+              keyCodeDown={83} // keyCode s
               padPosPath={leftPadPosPath}
               key={"leftPad"}
             />
             <Ball
-              playingIsActive={playingIsActive}
               increaseCounter={increaseCounter}
               hasCollisionWithPad={hasCollisionWithPad}
               yStep={yStep}
             />
             <Pad
-              playingIsActive={playingIsActive}
               isRightPad
               keyCodeUp={38} // keyCode Arrow up
               keyCodeDown={40} // keyCode Arrow down

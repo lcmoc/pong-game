@@ -5,11 +5,12 @@ import React, { useCallback, useEffect } from "react";
 import { useDoc } from "@syncstate/react";
 
 const Ball = ({
-  playingIsActive,
   increaseCounter,
   hasCollisionWithPad,
   yStep,
 }) => {
+  const [playingIsActive, setPlayingIsActive] = useDoc("/playingIsActive");
+
   const [ballPos, setBallPos] = useDoc("/ballPos");
   const [direction, setDirection] = useDoc("/direction");
   

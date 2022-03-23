@@ -25,16 +25,22 @@ const store = createDocStore(
       x: Math.random() < 0.5,
     },
     playingIsActive: false,
+    newGame: false
   },
   [remote.createInitializer()]
 );
 
 //enable remote plugin
-store.dispatch(remote.enableRemote("/leftPadPos"));
-store.dispatch(remote.enableRemote("/rightPadPos"));
-store.dispatch(remote.enableRemote("/ballPos"));
-store.dispatch(remote.enableRemote("/direction"));
-store.dispatch(remote.enableRemote("/playingIsActive"));
+store.dispatch(
+  remote.enableRemote([
+    "/leftPadPos",
+    "/rightPadPos",
+    "/ballPos",
+    "/direction",
+    "/playingIsActive",
+    "/newGame",
+  ])
+);
 
 //setting up socket connection with the server
 let socket = io.connect("http://localhost:8000");
@@ -45,6 +51,7 @@ socket.emit("fetchDoc", "/rightPadPos");
 socket.emit("fetchDoc", "/ballPos");
 socket.emit("fetchDoc", "/direction");
 socket.emit("fetchDoc", "/playingIsActive");
+socket.emit("fetchDoc", "/newGame");
 
 //observe the changes in store state
 store.observe(
@@ -99,6 +106,7 @@ store.observe(
   "doc",
   "/playingIsActive",
   (playingIsActive, change) => {
+    console.log('playingIsActive', playingIsActive);
     if (!change.origin) {
       //send json patch to the server
       socket.emit("change", "/playingIsActive", change);
@@ -107,30 +115,24 @@ store.observe(
   Infinity
 );
 
+store.observe(
+  "doc",
+  "/newGame",
+  (newGame, change) => {
+    console.log('playingIsActive', newGame);
+    if (!change.origin) {
+      //send json patch to the server
+      socket.emit("change", "/newGame", change);
+    }
+  },
+  Infinity
+);
+
+
 //get patches from server and dispatch
-socket.on("change", (path, patch) => {
-  // console.log(patch, "patch");
-  store.dispatch(remote.applyRemote(path.replace("/leftPadPos", ""), patch));
-});
 
 socket.on("change", (path, patch) => {
-  // console.log(patch, "patch");
-  store.dispatch(remote.applyRemote(path.replace("/rightPadPos", ""), patch));
-});
-
-socket.on("change", (path, patch) => {
-  // console.log(patch, "patch");
-  store.dispatch(remote.applyRemote(path.replace("/ballPos", ""), patch));
-});
-
-socket.on("change", (path, patch) => {
-  // console.log(patch, "patch");
-  store.dispatch(remote.applyRemote(path.replace("/direction", ""), patch));
-});
-
-socket.on("change", (path, patch) => {
-  // console.log(patch, "patch");
-  store.dispatch(remote.applyRemote(path.replace("/playingIsActive", ""), patch));
+  store.dispatch(remote.applyRemote(path.replace(path, ""), patch));
 });
 
 ReactDOM.render(
