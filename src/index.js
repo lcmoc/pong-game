@@ -106,7 +106,6 @@ store.observe(
   "doc",
   "/playingIsActive",
   (playingIsActive, change) => {
-    console.log('playingIsActive', playingIsActive);
     if (!change.origin) {
       //send json patch to the server
       socket.emit("change", "/playingIsActive", change);
@@ -119,7 +118,6 @@ store.observe(
   "doc",
   "/newGame",
   (newGame, change) => {
-    console.log('playingIsActive', newGame);
     if (!change.origin) {
       //send json patch to the server
       socket.emit("change", "/newGame", change);

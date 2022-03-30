@@ -10,27 +10,29 @@ const Table = ({ increaseCounter }) => {
 
   const leftPadPosPath = "/leftPadPos";
   const rightPadPosPath = "/rightPadPos";
-  
+
   const [leftPadPos, setLeftPadPos] = useDoc(leftPadPosPath);
   const [rightPadPos, setRightPadPos] = useDoc(rightPadPosPath);
   const [ballPos, setBallPos] = useDoc("/ballPos");
   const [newGame, setNewGame] = useDoc("/ballPos");
-  
+
+  const keyCodeArrowUp = 38;
+  const keyCodeArrowDown = 40;
+  const keyCodeW = 87;
+  const keyCodeS = 83;
+
   const handleYSpeed = (topPos) => {
-    const ballPosOnPad = (100 / (leftPadPos.bottomPos - leftPadPos.topPos) * (topPos - leftPadPos.topPos));
-    
-    if (ballPosOnPad === 50) {
-      setYStep(0)
-    }
+    const ballPosOnPad =
+      (100 / (leftPadPos.bottomPos - leftPadPos.topPos)) *
+      (topPos - leftPadPos.topPos);
 
-    if(ballPosOnPad < 50) {
-      setYStep((100 - ballPosOnPad) / 1000);
-    }
+    const directionStraight = ballPosOnPad === 50 && 0;
+    const directionUp = ballPosOnPad < 50 && (100 - ballPosOnPad) / 1000;
+    const directionDown = ballPosOnPad > 50 && ballPosOnPad / 1000;
 
-    if(ballPosOnPad > 50) {
-      setYStep(ballPosOnPad / 1000);
-    }
+    const newYStep = directionStraight || directionUp || directionDown || yStep;
 
+    setYStep(newYStep);
   };
 
   const ballIsOnSameYCoordinateAsPad = (topPos, xCollisionPad) => {
@@ -57,15 +59,12 @@ const Table = ({ increaseCounter }) => {
   };
 
   const hasCollisionWithPad = () => {
-    const xCollisionPad = ballIsOnSameXCoordinateAsPad(ballPos.leftPos, ballPos.rightPos);
-    switch (xCollisionPad) {
-      case 1:
-        return ballIsOnSameYCoordinateAsPad(ballPos.topPos, xCollisionPad);
-      case 2:
-        return ballIsOnSameYCoordinateAsPad(ballPos.topPos, xCollisionPad);
-      default:
-        return 0;
-    }
+    const xCollisionPad = ballIsOnSameXCoordinateAsPad(
+      ballPos.leftPos,
+      ballPos.rightPos
+    );
+
+    return ballIsOnSameYCoordinateAsPad(ballPos.topPos, xCollisionPad);
   };
 
   return (
@@ -74,9 +73,9 @@ const Table = ({ increaseCounter }) => {
         {newGame && (
           <>
             <Pad
-              isRightPad={false}
-              keyCodeUp={87} // keyCode w
-              keyCodeDown={83} // keyCode s
+              pad={1}
+              keyCodeUp={keyCodeW}
+              keyCodeDown={keyCodeS}
               padPosPath={leftPadPosPath}
               key={"leftPad"}
             />
@@ -86,9 +85,9 @@ const Table = ({ increaseCounter }) => {
               yStep={yStep}
             />
             <Pad
-              isRightPad
-              keyCodeUp={38} // keyCode Arrow up
-              keyCodeDown={40} // keyCode Arrow down
+              pad={2}
+              keyCodeUp={keyCodeArrowUp}
+              keyCodeDown={keyCodeArrowDown}
               padPosPath={rightPadPosPath}
               key={"rightPad"}
             />

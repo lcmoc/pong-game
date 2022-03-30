@@ -4,13 +4,19 @@ import React, { useCallback, useEffect } from "react";
 
 import { useDoc } from "@syncstate/react";
 
-const Pad = ({ playingIsActive, isRightPad = false, keyCodeUp, keyCodeDown, padPosPath}) => {  
+const Pad = ({
+  playingIsActive,
+  pad = 1,
+  keyCodeUp,
+  keyCodeDown,
+  padPosPath,
+}) => {
   const [padPos, setPadPos] = useDoc(padPosPath);
 
   const step = 2;
   const padWidth = 3;
   const padHeight = 25;
-  const leftPos = isRightPad ? 100 - padWidth : 0;
+  const leftPos = pad === 2 ? 100 - padWidth : 0;
   const topPos = padPos.topPos;
 
   const style = {
@@ -25,35 +31,43 @@ const Pad = ({ playingIsActive, isRightPad = false, keyCodeUp, keyCodeDown, padP
   }, [topPos]);
 
   const getBounceWall = useCallback(() => {
-    return !isRightPad ? leftPos + padWidth: leftPos;
-  }, [leftPos, padWidth, isRightPad]);
+    const bounceWallPos =
+      (pad === 2 && leftPos) || (pad === 1 && leftPos + padWidth);
+    return bounceWallPos;
+  }, [leftPos, padWidth, pad]);
 
-  const moveDown = useCallback(() => {
+  const move = useCallback(
+    (keyCode) => {
+      const stepUp =
+        (keyCode === keyCodeUp && topPos > 0 && topPos - step) || null;
+      const stepDown =
+        (keyCode === keyCodeDown && getBottomPos() < 100 && topPos + step) ||
+        null;
+
+      const newTopPos = stepDown || stepUp || padPos.topPos;
+
       setPadPos({
-        ...padPos,
         leftPos: getBounceWall(),
-        topPos: getBottomPos() < 100 && topPos + step,
-        bottomPos: getBottomPos()
-      })
-  }, [getBottomPos, topPos, padPos, setPadPos, getBounceWall]);
-
-  const moveUp = useCallback(() => {
-    setPadPos({
-      ...padPos,
-      leftPos: getBounceWall(),
-      topPos: topPos > 0 && topPos - step,
-      bottomPos: getBottomPos()
-    });
-  }, [topPos, padPos, setPadPos, getBottomPos, getBounceWall]);
+        topPos: newTopPos,
+        bottomPos: getBottomPos(),
+      });
+    },
+    [
+      keyCodeUp,
+      getBottomPos,
+      getBounceWall,
+      padPos.topPos,
+      setPadPos,
+      topPos,
+      keyCodeDown,
+    ]
+  );
 
   const movePad = useCallback(
     (pressedKey) => {
-      const keyCode = pressedKey.keyCode
-      
-      keyCode === keyCodeUp && moveUp();
-      keyCode === keyCodeDown && moveDown();
+      move(pressedKey.keyCode);
     },
-    [keyCodeUp, keyCodeDown, moveUp, moveDown]
+    [move]
   );
 
   useEffect(() => {
