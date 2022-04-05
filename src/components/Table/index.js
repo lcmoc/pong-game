@@ -70,8 +70,7 @@ const Table = ({ increaseCounter }) => {
   return (
     <div className="OuterWrapper">
       <div className="InnerWrapper">
-        {(
-          <>
+
           <Pad
             pad={1}
             keyCodeUp={keyCodeW}
@@ -91,8 +90,7 @@ const Table = ({ increaseCounter }) => {
             padPosPath={rightPadPosPath}
             key={"rightPad"}
           />
-        </>
-        )}
+
       </div>
     </div>
   );
