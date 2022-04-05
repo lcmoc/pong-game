@@ -25,7 +25,7 @@ const store = createDocStore(
       x: Math.random() < 0.5,
     },
     playingIsActive: false,
-    newGame: false
+    newGame: false,
   },
   [remote.createInitializer()]
 );

@@ -5,13 +5,13 @@ import React, { useCallback, useEffect } from "react";
 import { useDoc } from "@syncstate/react";
 
 const Pad = ({
-  playingIsActive,
   pad = 1,
   keyCodeUp,
   keyCodeDown,
   padPosPath,
 }) => {
   const [padPos, setPadPos] = useDoc(padPosPath);
+  const [playingIsActive, setPlayingIsActive] = useDoc("/playingIsActive");
 
   const step = 2;
   const padWidth = 3;
@@ -64,14 +64,14 @@ const Pad = ({
   );
 
   const movePad = useCallback(
-    (pressedKey) => {
+    (pressedKey) => { 
       move(pressedKey.keyCode);
     },
     [move]
   );
 
   useEffect(() => {
-    document.addEventListener("keydown", movePad);
+    playingIsActive && document.addEventListener("keydown", movePad);
 
     return () => {
       document.removeEventListener("keydown", movePad);
