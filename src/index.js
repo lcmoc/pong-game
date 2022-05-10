@@ -11,7 +11,8 @@ import io from "socket.io-client";
 import reportWebVitals from "./reportWebVitals";
 
 const startPos = 50;
-const starDirection = Math.random() < 0.5;
+const randomStartDirection = () =>  Math.random() < 0.5;
+
 //setting up socket connection with the server
 
 const store = createDocStore(
@@ -24,8 +25,8 @@ const store = createDocStore(
       leftPos: 50,
     },
     direction: {
-      y: starDirection,
-      x: starDirection,
+      y: randomStartDirection(),
+      x: randomStartDirection(),
     },
     playingIsActive: false,
     newGame: false,
@@ -35,7 +36,7 @@ const store = createDocStore(
 
 const [doc, setDoc] = store.useDoc();
 
-let socket = io.connect("http://localhost:8000");
+const socket = io.connect("http://localhost:8000");
 
 //enable remote plugin
 store.dispatch(
@@ -51,13 +52,12 @@ store.dispatch(
 );
 
 // send request to server to get patches every time when page reloads
-// socket.emit("fetchDoc", "/leftPadPos");
-// socket.emit("fetchDoc", "/rightPadPos");
-// socket.emit("fetchDoc", "/ballPos");
-// socket.emit("fetchDoc", "/direction");
-// socket.emit("fetchDoc", "/playingIsActive");
-// socket.emit("fetchDoc", "/newGame");
-// socket.emit("fetchDoc", "/activeUser");
+socket.emit("fetchDoc", "/leftPadPos");
+socket.emit("fetchDoc", "/rightPadPos");
+socket.emit("fetchDoc", "/ballPos");
+socket.emit("fetchDoc", "/direction");
+socket.emit("fetchDoc", "/playingIsActive");
+socket.emit("fetchDoc", "/newGame");
 
 //observe the changes in store state
 store.observe(
@@ -132,15 +132,15 @@ store.observe(
   Infinity
 );
 
-
 //get patches from server and dispatch
 
 socket.on("change", (path, patch) => {
   store.dispatch(remote.applyRemote(path.replace(path, ""), patch));
 });
 
-socket.on('counter', function (data) {
-  setDoc((doc) => doc.activeUser = data.count);
+// gets emitted data (active user count) from server and adds it into the activeUser syncstate
+socket.on('counter', function (serverData) {
+  setDoc((doc) => doc.activeUser = serverData.activeUserCount);
 });
 
 ReactDOM.render(

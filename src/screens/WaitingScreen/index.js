@@ -10,7 +10,7 @@ const WaitingScreen = () => {
   return (
     <div>
       {notEnoughPlayers && <h2>Waiting for an other player ...</h2>}
-      {toManyPlayers && <h2>To many players ...</h2>}
+      {toManyPlayers && <h2>Too many players ...</h2>}
       <p>Player count: {activeUser}</p>
     </div>
   );

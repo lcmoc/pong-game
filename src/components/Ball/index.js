@@ -78,17 +78,6 @@ const Ball = ({ increaseCounter, hasCollisionWithPad, yStep }) => {
     };
 
     const wallCollision = () => {
-      // const topIsReached = ballPos.topPos <= 0;
-      // const bottomIsReached = getBottomPos() >= 100;
-
-      // const newYDirection = topIsReached || !bottomIsReached || direction.y;
-      // console.log('oppositeYDirection', newYDirection);
-
-      //   setDirection({
-      //     ...direction,
-      //     y: newYDirection
-      //   })
-
       if (getBottomPos() >= 100) {
         setDirection({ ...direction, y: false });
       } else if (topPos <= 0) {

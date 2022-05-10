@@ -8,7 +8,7 @@ const app = express();
 const server = app.listen(8000, function () {
   console.log("listening on port 8000");
 });
-var count = 0;
+var activeUserCount = 0;
 
 const io = socket(server, {
   cors: {
@@ -33,15 +33,14 @@ io.on("connection", function (socket) {
   });
 
   // Count active clients
-  count++;
+  activeUserCount++;
 
-  console.log("xxx", count);
-  socket.emit("counter", { count: count });
+  socket.emit("counter", { activeUserCount: activeUserCount });
 
   // /* Disconnect socket */
   socket.on("disconnect", function () {
-    count--;
-    socket.emit("counter", { count: count });
+    activeUserCount--;
+    socket.emit("counter", { activeUserCount: activeUserCount });
   });
   
   //patches recieved from the client
