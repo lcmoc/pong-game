@@ -11,6 +11,9 @@ const Pong = () => {
   const [leftPadPos, setLeftPadPos] = useDoc("/leftPadPos");
   const [rightPadPos, setRightPadPos] = useDoc("/rightPadPos");
   const [ballPos, setBallPos] = useDoc("/ballPos");
+  const [activeUser, setActiveUser] = useDoc("/activeUser");
+
+  console.log("activeUser", activeUser);
 
   const [score, setScore] = useState({ left: 0, right: 0 });
 
@@ -20,11 +23,12 @@ const Pong = () => {
       leftPos: 50,
     });
     setLeftPadPos({
-      topPos: 50
+      topPos: 50,
     });
     setRightPadPos({
-      topPos: 50
-    })
+      topPos: 50,
+    });
+    !newGame && setScore({ left: 0, right: 0 });
   };
 
   const increaseCounter = (goal) => {
@@ -38,14 +42,15 @@ const Pong = () => {
   };
 
   const handleGameStart = () => {
-    setPlayingIsActive(!playingIsActive);
-    setNewGame(!newGame)
-    !newGame && setScore({ left: 0, right: 0 });
-    reinitialize();
+    if (activeUser === 2) {
+      setPlayingIsActive(!playingIsActive);
+      setNewGame(!newGame);
+      reinitialize();
+    }
   };
 
   return (
-    <>
+    <div className={activeUser !== 2 ? "PongWrapper": ""}>
       <div className="Score">
         {score.left} / {score.right}
       </div>
@@ -53,7 +58,7 @@ const Pong = () => {
       <button onClick={() => handleGameStart()} className="PlayButton">
         {playingIsActive ? "Stop" : "Start"}
       </button>
-    </>
+    </div>
   );
 };
 

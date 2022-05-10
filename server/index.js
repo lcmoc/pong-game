@@ -8,16 +8,18 @@ const app = express();
 const server = app.listen(8000, function () {
   console.log("listening on port 8000");
 });
+var count = 0;
 
-const io = socket(server, {cors: {
-  origin: "*",
-}}
-);
-const projectId = uuidv4();  //generate unique id 
+const io = socket(server, {
+  cors: {
+    origin: "*",
+  },
+});
+const projectId = uuidv4(); //generate unique id
 
 let patchManager = new PatchManager();
 
-io.on("connection", async (socket) => {
+io.on("connection", function (socket) {
   socket.on("fetchDoc", (path) => {
     //get all patches
     const patchesList = patchManager.getAllPatches(projectId, path);
@@ -30,9 +32,20 @@ io.on("connection", async (socket) => {
     }
   });
 
+  // Count active clients
+  count++;
+
+  console.log("xxx", count);
+  socket.emit("counter", { count: count });
+
+  // /* Disconnect socket */
+  socket.on("disconnect", function () {
+    count--;
+    socket.emit("counter", { count: count });
+  });
+  
   //patches recieved from the client
   socket.on("change", (path, change) => {
-    console.log('change', change);
     change.origin = socket.id;
 
     //resolves conflicts internally

@@ -14,3 +14,7 @@
     color: #ffff;
     margin-bottom: 20px;
 }
+
+.PongWrapper {
+    filter: blur(8px);
+}

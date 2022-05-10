@@ -103,7 +103,7 @@ const Ball = ({ increaseCounter, hasCollisionWithPad, yStep }) => {
         wallCollision();
         padCollision();
         doStep();
-      }, 10);
+      }, 1);
 
     isGoalCollision() && reinitialize();
 

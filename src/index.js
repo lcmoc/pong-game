@@ -11,9 +11,12 @@ import io from "socket.io-client";
 import reportWebVitals from "./reportWebVitals";
 
 const startPos = 50;
+const starDirection = Math.random() < 0.5;
+//setting up socket connection with the server
 
 const store = createDocStore(
   {
+    activeUser: 0,
     leftPadPos: { topPos: startPos },
     rightPadPos: { topPos: startPos },
     ballPos: {
@@ -21,14 +24,18 @@ const store = createDocStore(
       leftPos: 50,
     },
     direction: {
-      y: Math.random() < 0.5,
-      x: Math.random() < 0.5,
+      y: starDirection,
+      x: starDirection,
     },
     playingIsActive: false,
     newGame: false,
   },
   [remote.createInitializer()]
 );
+
+const [doc, setDoc] = store.useDoc();
+
+let socket = io.connect("http://localhost:8000");
 
 //enable remote plugin
 store.dispatch(
@@ -39,19 +46,18 @@ store.dispatch(
     "/direction",
     "/playingIsActive",
     "/newGame",
+    "/activeUser",
   ])
 );
 
-//setting up socket connection with the server
-let socket = io.connect("http://localhost:8000");
-
 // send request to server to get patches every time when page reloads
-socket.emit("fetchDoc", "/leftPadPos");
-socket.emit("fetchDoc", "/rightPadPos");
-socket.emit("fetchDoc", "/ballPos");
-socket.emit("fetchDoc", "/direction");
-socket.emit("fetchDoc", "/playingIsActive");
-socket.emit("fetchDoc", "/newGame");
+// socket.emit("fetchDoc", "/leftPadPos");
+// socket.emit("fetchDoc", "/rightPadPos");
+// socket.emit("fetchDoc", "/ballPos");
+// socket.emit("fetchDoc", "/direction");
+// socket.emit("fetchDoc", "/playingIsActive");
+// socket.emit("fetchDoc", "/newGame");
+// socket.emit("fetchDoc", "/activeUser");
 
 //observe the changes in store state
 store.observe(
@@ -131,6 +137,10 @@ store.observe(
 
 socket.on("change", (path, patch) => {
   store.dispatch(remote.applyRemote(path.replace(path, ""), patch));
+});
+
+socket.on('counter', function (data) {
+  setDoc((doc) => doc.activeUser = data.count);
 });
 
 ReactDOM.render(
