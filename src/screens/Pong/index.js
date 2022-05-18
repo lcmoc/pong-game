@@ -47,7 +47,7 @@ const Pong = () => {
   };
 
   return (
-    <div className={activeUser !== 2 ? "PongWrapper": ""}>
+    <div>
       <div className="Score">
         {score.left} / {score.right}
       </div>

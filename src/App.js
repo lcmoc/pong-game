@@ -13,8 +13,7 @@ function App() {
         <h1>Pong Game</h1>
       </header>
       <main className='App-Main'>
-      {activeUser !== 2 && <WaitingScreen />}
-        <Pong />
+      {activeUser !== 2 ? <WaitingScreen /> : <Pong />}
       </main>
     </div>
   );

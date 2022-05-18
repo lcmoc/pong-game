@@ -139,6 +139,9 @@ socket.on("change", (path, patch) => {
 });
 
 // gets emitted data (active user count) from server and adds it into the activeUser syncstate
+
+//TODO / idea: update user counter every 30sek
+
 socket.on('counter', function (serverData) {
   setDoc((doc) => doc.activeUser = serverData.activeUserCount);
 });
