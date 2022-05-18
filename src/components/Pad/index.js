@@ -12,6 +12,7 @@ const Pad = ({
 }) => {
   const [padPos, setPadPos] = useDoc(padPosPath);
   const [playingIsActive, setPlayingIsActive] = useDoc("/playingIsActive");
+  const [activeUser] = useDoc("/activeUser");
 
   const isLeftPad = pad === 1;
   const step = 2;
@@ -64,12 +65,12 @@ const Pad = ({
   );
 
   useEffect(() => {
-    playingIsActive && document.addEventListener("keydown", movePad);
+    activeUser === 2 && playingIsActive && document.addEventListener("keydown", movePad);
 
     return () => {
       document.removeEventListener("keydown", movePad);
     };
-  }, [movePad, playingIsActive]);
+  }, [movePad, playingIsActive, activeUser]);
 
   return <div className="Pad" style={style}></div>;
 };

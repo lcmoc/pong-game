@@ -1,4 +1,4 @@
-import './styles.css'
+import "./styles.css";
 
 import { useDoc } from "@syncstate/react";
 
@@ -10,7 +10,7 @@ const WaitingScreen = () => {
   return (
     <div>
       {notEnoughPlayers && <h2>Waiting for an other player ...</h2>}
-      {toManyPlayers && <h2>Too many players ...</h2>}
+      {toManyPlayers && <h2>Game is full, wait for somebody to leave</h2>}
       <p>Player count: {activeUser}</p>
     </div>
   );

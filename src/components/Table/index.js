@@ -14,7 +14,6 @@ const Table = ({ increaseCounter }) => {
   const [leftPadPos, setLeftPadPos] = useDoc(leftPadPosPath);
   const [rightPadPos, setRightPadPos] = useDoc(rightPadPosPath);
   const [ballPos, setBallPos] = useDoc("/ballPos");
-  const [newGame, setNewGame] = useDoc("/newGame"); 
 
   const keyCodeArrowUp = 38;
   const keyCodeArrowDown = 40;
@@ -66,31 +65,29 @@ const Table = ({ increaseCounter }) => {
 
     return ballIsOnSameYCoordinateAsPad(ballPos.topPos, xCollisionPad);
   };
-  
+
   return (
     <div className="OuterWrapper">
       <div className="InnerWrapper">
-
-          <Pad
-            pad={1}
-            keyCodeUp={keyCodeW}
-            keyCodeDown={keyCodeS}
-            padPosPath={leftPadPosPath}
-            key={"leftPad"}
-          />
-          <Ball
-            increaseCounter={increaseCounter}
-            hasCollisionWithPad={hasCollisionWithPad}
-            yStep={yStep}
-          />
-          <Pad
-            pad={2}
-            keyCodeUp={keyCodeArrowUp}
-            keyCodeDown={keyCodeArrowDown}
-            padPosPath={rightPadPosPath}
-            key={"rightPad"}
-          />
-
+        <Pad
+          pad={1}
+          keyCodeUp={keyCodeW}
+          keyCodeDown={keyCodeS}
+          padPosPath={leftPadPosPath}
+          key={"leftPad"}
+        />
+        <Ball
+          increaseCounter={increaseCounter}
+          hasCollisionWithPad={hasCollisionWithPad}
+          yStep={yStep}
+        />
+        <Pad
+          pad={2}
+          keyCodeUp={keyCodeArrowUp}
+          keyCodeDown={keyCodeArrowDown}
+          padPosPath={rightPadPosPath}
+          key={"rightPad"}
+        />
       </div>
     </div>
   );

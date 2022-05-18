@@ -12,9 +12,6 @@ const Pong = () => {
   const [rightPadPos, setRightPadPos] = useDoc("/rightPadPos");
   const [ballPos, setBallPos] = useDoc("/ballPos");
   const [activeUser, setActiveUser] = useDoc("/activeUser");
-
-  console.log("activeUser", activeUser);
-
   const [score, setScore] = useState({ left: 0, right: 0 });
 
   const reinitialize = () => {
