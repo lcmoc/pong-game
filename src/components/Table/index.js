@@ -2,54 +2,36 @@ import "./styles.css";
 
 import Ball from "../Ball";
 import Pad from "../Pad";
+import { useDoc } from "@syncstate/react";
 import { useState } from "react";
 
-const Table = ({ playingIsActive, increaseCounter, newGame }) => {
+const Table = ({ increaseCounter }) => {
   const [yStep, setYStep] = useState(0);
 
-  const [leftPadPos, setLeftPadPos] = useState({
-    leftPos: 3,
-    topPos: 50,
-    bottomPos: 75,
-  });
+  const leftPadPosPath = "/leftPadPos";
+  const rightPadPosPath = "/rightPadPos";
 
-  const [rightPadPos, setRightPadPos] = useState({
-    leftPos: 97,
-    topPos: 50,
-    bottomPos: 75,
-  });
+  const [leftPadPos, setLeftPadPos] = useDoc(leftPadPosPath);
+  const [rightPadPos, setRightPadPos] = useDoc(rightPadPosPath);
+  const [ballPos, setBallPos] = useDoc("/ballPos");
 
-  const padPosHandler = (props, right) => {
-    const allPropsAreSet = props.leftPos && props.topPos && props.bottomPos;
-
-    !right &&
-      allPropsAreSet &&
-      setLeftPadPos({
-        ...props,
-      });
-
-    right &&
-      allPropsAreSet &&
-      setRightPadPos({
-        ...props,
-      });
-  };
+  const keyCodeArrowUp = 38;
+  const keyCodeArrowDown = 40;
+  const keyCodeW = 87;
+  const keyCodeS = 83;
 
   const handleYSpeed = (topPos) => {
-    const ballPosOnPad = (100 / (leftPadPos.bottomPos - leftPadPos.topPos) * (topPos - leftPadPos.topPos));
-    
-    if (ballPosOnPad === 50) {
-      setYStep(0)
-    }
+    const ballPosOnPad =
+      (100 / (leftPadPos.bottomPos - leftPadPos.topPos)) *
+      (topPos - leftPadPos.topPos);
 
-    if(ballPosOnPad < 50) {
-      setYStep((100 - ballPosOnPad) / 1000);
-    }
+    const directionStraight = ballPosOnPad === 50 && 0;
+    const directionUp = ballPosOnPad < 50 && (100 - ballPosOnPad) / 1000;
+    const directionDown = ballPosOnPad > 50 && ballPosOnPad / 1000;
 
-    if(ballPosOnPad > 50) {
-      setYStep(ballPosOnPad / 1000);
-    }
+    const newYStep = directionStraight || directionUp || directionDown || yStep;
 
+    setYStep(newYStep);
   };
 
   const ballIsOnSameYCoordinateAsPad = (topPos, xCollisionPad) => {
@@ -75,40 +57,37 @@ const Table = ({ playingIsActive, increaseCounter, newGame }) => {
     return (leftPadCollision && 1) || (rightPadCollision && 2);
   };
 
-  const hasCollisionWithPad = (leftPos, topPos, rightPos) => {
-    const xCollisionPad = ballIsOnSameXCoordinateAsPad(leftPos, rightPos);
-    switch (xCollisionPad) {
-      case 1:
-        return ballIsOnSameYCoordinateAsPad(topPos, xCollisionPad);
-      case 2:
-        return ballIsOnSameYCoordinateAsPad(topPos, xCollisionPad);
-      default:
-        return 0;
-    }
+  const hasCollisionWithPad = () => {
+    const xCollisionPad = ballIsOnSameXCoordinateAsPad(
+      ballPos.leftPos,
+      ballPos.rightPos
+    );
+
+    return ballIsOnSameYCoordinateAsPad(ballPos.topPos, xCollisionPad);
   };
 
   return (
     <div className="OuterWrapper">
       <div className="InnerWrapper">
-        {newGame && (
-          <>
-            <Pad
-              playingIsActive={playingIsActive}
-              padPosHandler={padPosHandler}
-            />
-            <Ball
-              playingIsActive={playingIsActive}
-              increaseCounter={increaseCounter}
-              hasCollisionWithPad={hasCollisionWithPad}
-              yStep={yStep}
-            />
-            <Pad
-              playingIsActive={playingIsActive}
-              padPosHandler={padPosHandler}
-              isRightPad
-            />
-          </>
-        )}
+        <Pad
+          pad={1}
+          keyCodeUp={keyCodeW}
+          keyCodeDown={keyCodeS}
+          padPosPath={leftPadPosPath}
+          key={"leftPad"}
+        />
+        <Ball
+          increaseCounter={increaseCounter}
+          hasCollisionWithPad={hasCollisionWithPad}
+          yStep={yStep}
+        />
+        <Pad
+          pad={2}
+          keyCodeUp={keyCodeArrowUp}
+          keyCodeDown={keyCodeArrowDown}
+          padPosPath={rightPadPosPath}
+          key={"rightPad"}
+        />
       </div>
     </div>
   );
