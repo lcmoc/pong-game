@@ -15,7 +15,7 @@ const Pad = ({
   const [activeUser] = useDoc("/activeUser");
 
   const isLeftPad = pad === 1;
-  const step = 2;
+  const step = 5;
   const padWidth = 3;
   const padHeight = 25;
   const leftPos = !isLeftPad ? 100 - padWidth : 0;

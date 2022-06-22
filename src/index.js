@@ -36,7 +36,7 @@ const store = createDocStore(
 
 const [doc, setDoc] = store.useDoc();
 
-const socket = io.connect("http://localhost:8000");
+const socket = io.connect("https://node-ping-pong-server.herokuapp.com/");
 
 //enable remote plugin
 store.dispatch(
